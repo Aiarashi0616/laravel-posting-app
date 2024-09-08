@@ -54,4 +54,51 @@ class PostTest extends TestCase
         $response->assertStatus(200);
         $response->assertSee($post->title);
     }
+    
+     // 未ログインのユーザーは新規投稿ページにアクセスできない
+     public function test_guest_cannot_access_posts_create()
+     {
+         $response = $this->get(route('posts.create'));
+ 
+         $response->assertRedirect(route('login'));
+     }
+ 
+     // ログイン済みのユーザーは新規投稿ページにアクセスできる
+     public function test_user_can_access_posts_create()
+     {
+         $user = User::factory()->create();
+ 
+         $response = $this->actingAs($user)->get(route('posts.create'));
+ 
+         $response->assertStatus(200);
+     }
+     // 未ログインのユーザーは投稿を作成できない
+     public function test_guest_cannot_access_posts_store()
+     {
+         $post = [
+             'title' => 'プログラミング学習1日目',
+             'content' => '今日からプログラミング学習開始！頑張るぞ！'
+         ];
+ 
+         $response = $this->post(route('posts.store'), $post);
+ 
+         $this->assertDatabaseMissing('posts', $post);
+         $response->assertRedirect(route('login'));
+     }
+ 
+     // ログイン済みのユーザーは投稿を作成できる
+     public function test_user_can_access_posts_store()
+     {
+         $user = User::factory()->create();
+ 
+         $post = [
+             'title' => 'プログラミング学習1日目',
+             'content' => '今日からプログラミング学習開始！頑張るぞ！'
+         ];
+ 
+         $response = $this->actingAs($user)->post(route('posts.store'), $post);
+ 
+         $this->assertDatabaseHas('posts', $post);
+         $response->assertRedirect(route('posts.index'));
+     }
 }
