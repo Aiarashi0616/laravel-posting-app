@@ -4,23 +4,31 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Facades\Auth;
  use App\Models\Post;
  use App\Http\Requests\PostRequest;
+ use Illuminate\Support\Facades\DB;
 
 use Illuminate\Http\Request;
 
 class PostController extends Controller
 {
-     // 一覧ページ
-     public function index()
-     {
-         $posts = Auth::user()->posts()->orderBy('created_at', 'desc')->get();
- 
-         return view('posts.index', compact('posts'));
-     }
+    public function index() {
+        // postsテーブルから投稿データを取得し、更新日時で降順にソート
+        $posts = Post::orderBy('updated_at', 'desc')
+            ->select('id', 'title', 'content', 'updated_at')
+            ->get();
+    
+        // 変数$postsをposts/index.blade.phpファイルに渡す
+        return view('posts.index', compact('posts'));
+    }
+    
+
 
 
      // 詳細ページ
-     public function show(Post $post)
-     {
+     public function show($id) {
+       // Postモデルを使って、指定されたIDの投稿を取得
+        $post = Post::select('id', 'title', 'content', 'updated_at')  // 必要なカラムを指定
+        ->where('id', $id)
+        ->first();
          return view('posts.show', compact('post'));
      }
      // 作成ページ
@@ -29,8 +37,11 @@ class PostController extends Controller
          return view('posts.create');
      }
       // 作成機能
-      public function store(PostRequest $request)
-      {
+      public function store(PostRequest $request) {
+        $request->validate([
+            'title' => 'required|max:40',
+            'content' => 'required|max:200'
+        ]);
           $post = new Post();
           $post->title = $request->input('title');
           $post->content = $request->input('content');

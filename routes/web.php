@@ -47,5 +47,14 @@ require __DIR__.'/auth.php';
 
 // Route::delete('/posts/{post}', [PostController::class, 'destroy'])->middleware(['auth', 'verified'])->name('posts.destroy');
 
+
+Route::get('/posts/create', [PostController::class, 'create']);
+ 
+Route::post('/posts/store', [PostController::class, 'store'])->name('posts.store');
+
+
 Route::resource('posts', PostController::class)->middleware(['auth', 'verified']);
+Route::get('/posts', [PostController::class, 'index']);
+Route::get('/posts/create', [PostController::class, 'create'])->name('posts.create');
+
 

@@ -22,10 +22,12 @@
                      <div class="card-body">
                          <h2 class="card-title fs-5">{{ $post->title }}</h2>
                          <p class="card-text">{{ $post->content }}</p>
+                         <p class="text-muted"> {{ \Carbon\Carbon::parse($post->updated_at)->format('Y-m-d H:i') }}</p>
+
  
                          <div class="d-flex">
-                             <a href="{{ route('posts.show', $post) }}" class="btn btn-outline-primary d-block me-1">詳細</a>
-                             <a href="{{ route('posts.edit', $post) }}" class="btn btn-outline-primary d-block me-1">編集</a>
+                             <a href="{{route('posts.show', ['post' => $post->id]) }}" class="btn btn-outline-primary d-block me-1">詳細</a>
+                             <a href="{{ route('posts.edit', ['post' => $post->id]) }}" class="btn btn-outline-primary d-block me-1">編集</a>
  
                              <form action="{{ route('posts.destroy', $post) }}" method="POST" onsubmit="return confirm('本当に削除してもよろしいですか？');">
                                  @csrf
