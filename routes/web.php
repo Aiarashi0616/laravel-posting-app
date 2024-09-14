@@ -49,8 +49,9 @@ require __DIR__.'/auth.php';
 
 
 Route::get('/posts/create', [PostController::class, 'create']);
- 
 Route::post('/posts/store', [PostController::class, 'store'])->name('posts.store');
+
+Route::get('/posts/edit', [PostController::class, 'edit']);
 
 
 Route::resource('posts', PostController::class)->middleware(['auth', 'verified']);
